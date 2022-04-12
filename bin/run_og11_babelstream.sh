@@ -2,7 +2,8 @@
 
 # run_og11_babelstream.sh - compile with OG11 g++  and run babelstream
 
-OG11DIR=${OG11DIR:-$HOME/git/og11/install}
+OGDIR=${OGDIR:-$HOME/git/og11}
+OG11DIR=${OG11DIR:-$OGDIR/install}
 OG11GXX=${OG11GXX:-$OG11DIR/bin/g++}
 ROCMDIR=${ROCMDIR:-/opt/rocm}
 GPURUN=$HOME/rocm/aomp/bin/gpurun

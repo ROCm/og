@@ -13,8 +13,8 @@
 # Set number of make jobs to speed this up. 
 make_jobs=12
 
-# This MAINDIR will contain multiple git repositories clones
-MAINDIR=${MAINDIR:-/home/grodgers/git/og11}
+# This OGDIR will contain multiple git repositories and build directories 
+OGDIR=${OGDIR:-/home/grodgers/git/og11}
 
 # This script requires ROCMLLVM.
 ROCMLLVM=${ROCMLLVM:-/opt/rocm/llvm}
@@ -24,12 +24,12 @@ if [[ ! -f "${ROCMLLVM}/bin/llvm-mc" ]] ; then
 fi
 
 echo " ============================ OG11BSTEP: Initialize  ================="
-mkdir -p $MAINDIR
+mkdir -p $OGDIR
 if [ $? != 0 ] ; then 
-   echo "ERROR: No update access to $MAINDIR"
+   echo "ERROR: No update access to $OGDIR"
    exit 1
 fi
-gccmaindir=$MAINDIR/gcc
+gccmaindir=$OGDIR/gcc
 if [ -d $gccmaindir ] ; then 
    # Get updates
    cd $gccmaindir
@@ -37,8 +37,8 @@ if [ -d $gccmaindir ] ; then
    git status
 else
    # get a new clone of the source 
-   echo cd $MAINDIR
-   cd $MAINDIR
+   echo cd $OGDIR
+   cd $OGDIR
    echo git clone git://gcc.gnu.org/git/gcc.git
    git clone git://gcc.gnu.org/git/gcc.git
    cd $gccmaindir
@@ -46,18 +46,18 @@ else
    git pull
 fi
 
-if [ -d $MAINDIR/newlib-cygwin ] ; then 
+if [ -d $OGDIR/newlib-cygwin ] ; then 
    # Get updates if any
-   echo cd $MAINDIR/newlib-cygwin
-   cd $MAINDIR/newlib-cygwin
+   echo cd $OGDIR/newlib-cygwin
+   cd $OGDIR/newlib-cygwin
    echo git pull
    git pull
 else
-   cd $MAINDIR
+   cd $OGDIR
    echo git clone git://sourceware.org/git/newlib-cygwin.git
    git clone git://sourceware.org/git/newlib-cygwin.git
 fi
-[ ! -L $gccmaindir/newlib ] && ln -sf $MAINDIR/newlib-cygwin/newlib $gccmaindir/newlib
+[ ! -L $gccmaindir/newlib ] && ln -sf $OGDIR/newlib-cygwin/newlib $gccmaindir/newlib
 
 # wget tarballs for other components
 cd $gccmaindir
@@ -90,7 +90,7 @@ if [ ! -L mpfr ] ; then
    ln -sf mpfr-4.1.0 mpfr
 fi
 
-installdir="$MAINDIR/install"
+installdir="$OGDIR/install"
 [ -d $installdir ] && rm -rf $installdir
 mkdir -p $installdir/amdgcn-amdhsa/bin
 rsync -av $ROCMLLVM/bin/llvm-ar $installdir/amdgcn-amdhsa/bin/ar
@@ -99,7 +99,7 @@ rsync -av $ROCMLLVM/bin/llvm-mc $installdir/amdgcn-amdhsa/bin/as
 rsync -av $ROCMLLVM/bin/llvm-nm $installdir/amdgcn-amdhsa/bin/nm
 rsync -av $ROCMLLVM/bin/lld     $installdir/amdgcn-amdhsa/bin/ld
 echo " ============================ OG11BSTEP: Configure device ================="
-cd $MAINDIR
+cd $OGDIR
 #  Uncomment next line to start build from scratch
 [ -d ./build-amdgcn ] && rm -rf build-amdgcn
 mkdir -p build-amdgcn
@@ -123,7 +123,7 @@ make install
 echo "Removing symlink for newlib rm $gccmaindir/newlib"
 rm $gccmaindir/newlib
 
-cd $MAINDIR
+cd $OGDIR
 #  Uncomment next line to start build from scratch
 [ -d ./build-host ] && rm -rf build-host
 echo " ============================ OG11BSTEP: host configure ================="
