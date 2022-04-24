@@ -14,10 +14,10 @@
 make_jobs=12
 
 # This OGDIR will contain multiple git repositories and build directories 
-OGDIR=${OGDIR:-/home/grodgers/git/og11}
+OGDIR=${OGDIR:-$HOME/git/og11}
 
 # This script requires ROCMLLVM.
-ROCMLLVM=${ROCMLLVM:-/opt/rocm/llvm}
+ROCMLLVM=${ROCMLLVM:-$ROCM_PATH/llvm}
 if [[ ! -f "${ROCMLLVM}/bin/llvm-mc" ]] ; then 
    echo "ERROR:  missing ${ROCMLLVM}/bin/llvm-mc check LLVM installation"
    exit 1
