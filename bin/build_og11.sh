@@ -14,10 +14,10 @@
 make_jobs=12
 
 # This OGDIR will contain multiple git repositories and build directories 
-OGDIR=${OGDIR:-/home/grodgers/git/og11}
+OGDIR=${OGDIR:-$HOME/git/og11}
 
 # This script requires ROCMLLVM.
-ROCMLLVM=${ROCMLLVM:-/opt/rocm/llvm}
+ROCMLLVM=${ROCMLLVM:-$ROCM_PATH/llvm}
 if [[ ! -f "${ROCMLLVM}/bin/llvm-mc" ]] ; then 
    echo "ERROR:  missing ${ROCMLLVM}/bin/llvm-mc check LLVM installation"
    exit 1
@@ -106,8 +106,8 @@ mkdir -p build-amdgcn
 echo cd build-amdgcn
 cd build-amdgcn
 WITHOPTS="--with-gmp --with-mpfr --with-mpc "
-echo "../gcc/configure --prefix=$installdir -v --target=amdgcn-amdhsa --enable-languages=c,lto,fortran --disable-sjlj-exceptions --with-newlib --enable-as-accelerator-for=x86_64-pc-linux-gnu --with-build-time-tools=$installdir/amdgcn-amdhsa/bin --disable-libquadmath "  | tee ../amdgcnconfig.stdout
-../gcc/configure --prefix=$installdir -v --target=amdgcn-amdhsa --enable-languages=c,lto,fortran --disable-sjlj-exceptions --with-newlib --enable-as-accelerator-for=x86_64-pc-linux-gnu --with-build-time-tools=$installdir/amdgcn-amdhsa/bin --disable-libquadmath  2>&1 | tee ../amdgcnconfig.stdout
+echo "../gcc/configure --prefix=$installdir -v --target=amdgcn-amdhsa --enable-languages=c,lto,fortran --disable-sjlj-exceptions --with-newlib --enable-as-accelerator-for=x86_64-pc-linux-gnu --with-build-time-tools=$installdir/amdgcn-amdhsa/bin --disable-libquadmath --disable-multilib "  | tee ../amdgcnconfig.stdout
+../gcc/configure --prefix=$installdir -v --target=amdgcn-amdhsa --enable-languages=c,lto,fortran --disable-sjlj-exceptions --with-newlib --enable-as-accelerator-for=x86_64-pc-linux-gnu --with-build-time-tools=$installdir/amdgcn-amdhsa/bin --disable-libquadmath  --disable-multilib 2>&1 | tee ../amdgcnconfig.stdout
 if [ $? != 0 ] ; then 
    echo "ERROR  configure amdgcn compiler failed"
    exit 1
@@ -130,8 +130,8 @@ echo " ============================ OG11BSTEP: host configure ================="
 mkdir -p build-host
 echo cd build-host
 cd build-host
-echo "../gcc/configure --prefix=$installdir -v --build=x86_64-pc-linux-gnu --host=x86_64-pc-linux-gnu --target=x86_64-pc-linux-gnu --enable-offload-targets=amdgcn-amdhsa=$installdir/amdgcn-amdhsa "
-../gcc/configure --prefix=$installdir -v --build=x86_64-pc-linux-gnu --host=x86_64-pc-linux-gnu --target=x86_64-pc-linux-gnu --enable-offload-targets=amdgcn-amdhsa=$installdir/amdgcn-amdhsa 2>&1 | tee ../hostconfig.stdout
+echo "../gcc/configure --prefix=$installdir -v --build=x86_64-pc-linux-gnu --host=x86_64-pc-linux-gnu --target=x86_64-pc-linux-gnu --enable-offload-targets=amdgcn-amdhsa=$installdir/amdgcn-amdhsa --disable-multilib "
+../gcc/configure --prefix=$installdir -v --build=x86_64-pc-linux-gnu --host=x86_64-pc-linux-gnu --target=x86_64-pc-linux-gnu --enable-offload-targets=amdgcn-amdhsa=$installdir/amdgcn-amdhsa --disable-multilib 2>&1 | tee ../hostconfig.stdout
 if [ $? != 0 ] ; then 
    echo "ERROR configure host compiler failed"
    exit 1 
