@@ -6,29 +6,32 @@ OGDIR=${OGDIR:-$HOME/git/og11}
 OG11DIR=${OG11DIR:-$OGDIR/install}
 OG11GXX=${OG11GXX:-$OG11DIR/bin/g++}
 ROCMDIR=${ROCMDIR:-/opt/rocm}
-GPURUN=$HOME/rocm/aomp/bin/gpurun
+GPURUN=${GPURUN:-$ROCMDIR/llvm/bin/gpurun}
 DO_CPU_RUNS=0
 DO_OVERRIDES=0
 
-AOMP_REPOS=${AOMP_REPOS:-$HOME/git/aomp15.0}
-AOMP_REPOS_TEST=${AOMP_REPOS_TEST:-$HOME/git/aomp-test}
-BABELSTREAM_REPO=${BABELSTREAM_REPO:-$AOMP_REPOS_TEST/babelstream}
+#  https://github.com/UoB-HPC/babelstream
+BABELSTREAM_REPO=${BABELSTREAM_REPO:-$HOME/git/babelstream}
 BABELSTREAM_PATCH=${BABELSTREAM_PATCH:-$HOME/git/og11/og/bin/og11_babelstream.patch}
 BABELSTREAM_BUILD=${BABELSTREAM_BUILD:-/tmp/$USER/babelstream}
 OFFLOAD_ARCH_BIN=${OFFLOAD_ARCH_BIN:-$ROCMDIR/llvm/bin/offload-arch}
 
 if [ ! -f $OFFLOAD_ARCH_BIN ] ; then 
+  echo
   echo "ERROR: ROCM binary missing: $OFFLOAD_ARCH_BIN" 
+  echo "       Please install latest ROCM"
   exit 1
 fi
+
 _offload_arch=`$OFFLOAD_ARCH_BIN`
 
 if [ ! -d $BABELSTREAM_REPO ]; then
-  echo "ERROR: BabelStream not found in $BABELSTREAM_REPO"
-  echo "       Consider running these commands:"
   echo
-  echo "cd"
-  echo "git clone https://github.com/UoB-HPC/babelstream"
+  echo "ERROR: BabelStream not found in $BABELSTREAM_REPO"
+  echo "       Consider running these commands to fetch babelstream:"
+  echo
+  echo "   cd $HOME/git"
+  echo "   git clone https://github.com/UoB-HPC/babelstream"
   echo
   exit 1
 fi
@@ -56,29 +59,41 @@ echo | tee a results.txt
 echo "=========> RUNDATE:  $thisdate" | tee -a results.txt
 echo "=========> GPU:      $_offload_arch" || tee -a results.txt
 echo | tee -a results.txt
-echo "=========> NAME:     1 og11 OFFLOAD DEFAULTS" | tee -a results.txt
-echo "=========> COMPILER: $OG11GXX" | tee -a results.txt
+echo "=========> RUN:      1.  og11 OFFLOAD DEFAULTS" | tee -a results.txt
 og11_flags="-O3 -fopenmp -foffload=-march=$_offload_arch -D_OG11_DEFAULTS -DOMP -DOMP_TARGET_GPU"
    export LD_LIBRARY_PATH=$OG11DIR/lib64:$ROCMDIR/hsa/lib
    export OMP_TARGET_OFFLOAD=MANDATORY
    unset GCN_DEBUG
-   #export GCN_DEBUG=1
+   export GCN_DEBUG=1
    EXEC=omp-stream-og11
    rm -f $EXEC
-   if [ -f $GPURUN ] ; then 
-      echo $GPURUN $OG11GXX $og11_flags $omp_src -o $EXEC | tee -a results.txt
-      $GPURUN $OG11GXX $og11_flags $omp_src -o $EXEC
+   cmd="$OG11GXX -v $og11_flags $omp_src -o $EXEC"
+   echo "=========> CC CMD:   $cmd" | tee -a results.txt
+   echo
+   echo env >compile.log
+   env >>compile.log
+   echo "==================================" >>compile.log
+   echo $cmd >>compile.log
+   echo >>compile.log
+   $cmd >compile.stdout 2>>compile.log
+   rc=$?
+   if [ $rc == 0 ]; then
+      if [ -f $GPURUN ] ; then
+         echo $GPURUN ./$EXEC >> results.txt
+         $GPURUN ./$EXEC 2>&1 | tee -a results.txt
+      else
+         echo ./$EXEC >> results.txt
+         ./$EXEC 2>&1 | tee -a results.txt
+      fi
    else
-      echo $OG11GXX $og11_flags $omp_src -o $EXEC | tee -a results.txt
-      $OG11GXX $og11_flags $omp_src -o $EXEC
-   fi
-   if [ $? -ne 1 ]; then
-     ./$EXEC 2>&1 | tee -a results.txt
+      echo "ERROR: COMPILATION FAILED with rc=$rc ."
+      echo "       See $BABELSTREAM_BUILD/compile.log"
+      exit 1
    fi
    unset OMP_TARGET_OFFLOAD
 
 echo | tee -a results.txt
-echo "=========> NAME:     2. clang no simd" | tee -a results.txt
+echo "=========> RUN:      2. clang no simd" | tee -a results.txt
 _clangcc="$ROCMDIR/llvm/bin/clang++"
 _clang_omp_flags="-std=c++11 -O3 -fopenmp -fopenmp-targets=amdgcn-amd-amdhsa -Xopenmp-target=amdgcn-amd-amdhsa -march=$_offload_arch -DOMP -DOMP_TARGET_GPU -D_DEFAULTS_NOSIMD"
 echo "=========> COMPILER: $_clangcc" | tee -a results.txt
@@ -93,7 +108,7 @@ echo "=========> COMPILER: $_clangcc" | tee -a results.txt
 
 if [ $DO_OVERRIDES  == 1 ] ; then 
    echo | tee -a results.txt
-   echo "=========> NAME:     3 og11 OVERRIDES" | tee -a results.txt
+   echo "=========> RUN:      3. og11 with OVERRIDES" | tee -a results.txt
    echo "=========> COMPILER: $OG11GXX" | tee -a results.txt
    og11_flags="-O3 -fopenmp -foffload=-march=$_offload_arch -D_OG11_OVERRIDE -DNUM_THREADS=1024 -DNUM_TEAMS=240 -DOMP -DOMP_TARGET_GPU"
    export LD_LIBRARY_PATH=$OG11DIR/lib64:$ROCMDIR/hsa/lib
@@ -112,7 +127,7 @@ fi
 
 if [ $DO_CPU_RUNS == 1 ] ; then 
    echo | tee -a results.txt
-   echo "=========> NAME:     4. og11 OPENMP CPU" | tee -a results.txt
+   echo "=========> RUN:      4. og11 OPENMP CPU" | tee -a results.txt
    echo "=========> COMPILER: $OG11GXX" | tee -a results.txt
    omp_flags_cpu="-O3 -fopenmp -DOMP"
    unset OMP_TARGET_OFFLOAD
@@ -126,7 +141,7 @@ if [ $DO_CPU_RUNS == 1 ] ; then
    fi
 
    echo | tee -a results.txt
-   echo "=========> NAME:     5. gcc OPENMP CPU" | tee -a results.txt
+   echo "=========> RUN:      5. gcc OPENMP CPU" | tee -a results.txt
    GXX_VERSION=`g++ --version | grep -m1 "g++" | awk '{print $4}'`
    echo "=========> COMPILER: g++ $GXX_VERSION" | tee -a results.txt
    omp_flags_cpu="-O3 -fopenmp -DOMP"
