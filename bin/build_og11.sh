@@ -17,6 +17,7 @@ make_jobs=12
 OGDIR=${OGDIR:-$HOME/git/og11}
 
 # This script requires ROCMLLVM.
+ROCM_PATH=${ROCM_PATH:-/opt/rocm}
 ROCMLLVM=${ROCMLLVM:-$ROCM_PATH/llvm}
 if [[ ! -f "${ROCMLLVM}/bin/llvm-mc" ]] ; then 
    echo "ERROR:  missing ${ROCMLLVM}/bin/llvm-mc check LLVM installation"
