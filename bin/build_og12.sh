@@ -107,8 +107,8 @@ mkdir -p build-amdgcn
 echo cd build-amdgcn
 cd build-amdgcn
 WITHOPTS="--with-gmp --with-mpfr --with-mpc "
-echo "../gcc/configure --prefix=$installdir -v --target=amdgcn-amdhsa --enable-languages=c,lto,fortran --disable-sjlj-exceptions --with-newlib --enable-as-accelerator-for=x86_64-pc-linux-gnu --with-build-time-tools=$installdir/amdgcn-amdhsa/bin --disable-libquadmath --disable-multilib "  | tee ../amdgcnconfig.stdout
-../gcc/configure --prefix=$installdir -v --target=amdgcn-amdhsa --enable-languages=c,lto,fortran --disable-sjlj-exceptions --with-newlib --enable-as-accelerator-for=x86_64-pc-linux-gnu --with-build-time-tools=$installdir/amdgcn-amdhsa/bin --disable-libquadmath  --disable-multilib 2>&1 | tee ../amdgcnconfig.stdout
+echo "../gcc/configure --prefix=$installdir -v --target=amdgcn-amdhsa --enable-languages=c,lto,fortran --disable-sjlj-exceptions --with-newlib --enable-as-accelerator-for=x86_64-pc-linux-gnu --with-build-time-tools=$installdir/amdgcn-amdhsa/bin --disable-libquadmath"  | tee ../amdgcnconfig.stdout
+../gcc/configure --prefix=$installdir -v --target=amdgcn-amdhsa --enable-languages=c,lto,fortran --disable-sjlj-exceptions --with-newlib --enable-as-accelerator-for=x86_64-pc-linux-gnu --with-build-time-tools=$installdir/amdgcn-amdhsa/bin --disable-libquadmath 2>&1 | tee ../amdgcnconfig.stdout
 if [ $? != 0 ] ; then 
    echo "ERROR  configure amdgcn compiler failed"
    exit 1
