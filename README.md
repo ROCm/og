@@ -1,12 +1,12 @@
-OpenMP GCC (currently og11)
+OpenMP GCC (currently og12)
 ===========================
 
 This is README.md for https://github.com/ROCM-Developer-Tools/og.
 
 This is the base repository for the development of OpenMP in GCC. 
 
-The last build is ??.
-Currently OG11 11.0-0 is under development.
+The last build is the code sourcery preview dated 2022.9-05 
+Currently OG12 12.0-0 is under development.
 
 Attention Users!  Please use this repository for [issues](https://github.com/ROCm-Developer-Tools/og/issues).
 
@@ -24,9 +24,9 @@ Table of contents
 
 <A NAME="Overview">
 
-OG11 is a scripted build of gcc and supporting software. It has support for OpenMP target offload.
+OG12 is a scripted build of gcc and supporting software. It has support for OpenMP target offload.
 Some sources to support OpenMP target offload on AMD GPUs have not yet been merged into the upstream gcc trunk.
-The bin directory of this repository contains a README.md and build scripts needed to download, build, and install OG11 from source.
+The bin directory of this repository contains a README.md and build scripts needed to download, build, and install OG12 from source.
 
 ## Copyright and Disclaimer
 
@@ -70,7 +70,7 @@ Materials by the Government constitutes acknowledgement of AMD's proprietary rig
 EXPORT RESTRICTIONS: The Materials may be subject to export restrictions as stated in the 
 Software License Agreement.
 
-## OG11 Limitations
+## OG12 Limitations
 
 <A NAME="Limitations">
 
