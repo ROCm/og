@@ -9,19 +9,11 @@ program main
       b(i) = i
       c(i) = 10
     end do
-  
-    call foo(a,b,c)
-  end
-  
-  subroutine foo(a,b,c)
-    parameter (nsize=1000000)
-    real a(nsize), b(nsize), c(nsize)
-    integer i
-  !$omp target map(from:a) map(to:b,c)
-  !$omp parallel do
+      
+  !$omp target teams distribute parallel do map(from:a) map(to:b,c)
     do i=1,nsize
       a(i) = b(i) + c(i)
     end do
-  !$omp end target
+  !$omp end target teams distribute parallel do
     return
   end
