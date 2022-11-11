@@ -7,7 +7,7 @@ FILETYPE = f95
 
 FORT        ?= $(OGDIR)/bin/x86_64-none-linux-gnu-gfortran
 TARGET		?= $(shell $(ROCM_PATH)/llvm/bin/offload-arch)
-FFLAGS		?= -fopenmp -foffload=-march=$(TARGET) -D_OG12_DEFAULTS -DOMP -DOMP_TARGET_GPU
+FFLAGS		?= -O3 -fopenmp -foffload=-march=$(TARGET) -D_OG12_DEFAULTS -DOMP -DOMP_TARGET_GPU
 
 LD_LIBRARY_PATH=$(OGDIR)/lib64:$(<ODIR)/lib:$(OGDIR)/x86_64-none-linux-gnu/lib64:$(ROCM_PATH)/hsa/lib:$(LD_LIBRARY_PATH)
 
