@@ -16,10 +16,11 @@ else
 endif
 
 ROCM_PATH ?= /opt/rocm
-HSALIBDIR  = $(ROCM_PATH)/hsa/lib
+HSALIBDIR ?= $(ROCM_PATH)/hsa/lib
+OLARCH    ?= $(ROCM_PATH)/llvm/bin/offload-arch
 
 FC         = $(OGDIR)/bin/$(GFORTRAN)
-TARGET     = $(shell $(ROCM_PATH)/llvm/bin/offload-arch)
+TARGET     = $(shell $(OLARCH))
 FFLAGS     = -O3 -fopenmp -foffload=-march=$(TARGET)
 OGLIBS     = -lgomp -lgfortran -lgcc_s -lquadmath 
 
