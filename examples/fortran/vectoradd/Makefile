@@ -1,33 +1,34 @@
 
-OGDIR 		?= /opt/og12/sourcery-2022.09-5/
-ROCM_PATH 	?= /opt/rocm
+TESTNAME   = vectoradd
+FILETYPE   = f95
 
-TESTNAME    = vectoradd
-FILETYPE 	= f95
+# For Codebench Lite:
+OGDIR     ?= /opt/og12/sourcery-2022.09-5
+# For og12 development compiler
+#OGDIR      ?= $(HOME)/git/og12/install
 
-FC	        = $(OGDIR)/bin/x86_64-none-linux-gnu-gfortran
-TARGET		= $(shell $(ROCM_PATH)/llvm/bin/offload-arch)
-FFLAGS		= -O3 -fopenmp -foffload=-march=$(TARGET) -D_OG12_DEFAULTS -DOMP -DOMP_TARGET_GPU
+ifeq (sourcery,$(findstring sourcery,$(OGDIR)))
+  GFORTRAN  = x86_64-none-linux-gnu-gfortran
+  OGLIBDIR  = $(OGDIR)/x86_64-none-linux-gnu/lib64
+else
+  GFORTRAN  = x86_64-pc-linux-gnu-gfortran
+  OGLIBDIR  = $(OGDIR)/lib64
+endif
 
-LD_LIBRARY_PATH=$(OGDIR)/lib64:$(OGDIR)/lib:$(OGDIR)/x86_64-none-linux-gnu/lib64:$(ROCM_PATH)/hsa/lib:$(LD_LIBRARY_PATH)
+ROCM_PATH ?= /opt/rocm
+HSALIBDIR  = $(ROCM_PATH)/hsa/lib
 
-# ----- Demo compile and link in one step, no object code saved
+FC         = $(OGDIR)/bin/$(GFORTRAN)
+TARGET     = $(shell $(ROCM_PATH)/llvm/bin/offload-arch)
+FFLAGS     = -O3 -fopenmp -foffload=-march=$(TARGET)
+OGLIBS     = -lgomp -lgfortran -lgcc_s -lquadmath 
+
 $(TESTNAME): $(TESTNAME).$(FILETYPE)
-	$(FC)  $(FFLAGS) $(LFLAGS) $^ -o $@
+	$(FC) $(FFLAGS) $(OGLIBS) -L$(OGLIBDIR) -Wl,-rpath=$(OGLIBDIR) $^ -o $@
 
 run: .PHONY $(TESTNAME)
-	./$(TESTNAME)
-
-# ----   Demo compile and link in two steps, object saved
-$(TESTNAME).o: $(TESTNAME).$(FILETYPE)
-	$(FC) -c $(FFLAGS) -L$(OGDIR)/lib $^
-
-obin:	$(TESTNAME).o 
-	$(FC) $(LFLAGS) $^ -o obin
-
-run_obin: .PHONY obin 
-	./obinls
+	LD_LIBRARY_PATH=$(HSALIBDIR):$(OGLIBDIR) ./$(TESTNAME)
 
 .PHONY: clean
 clean:
-	rm -rf vectoradd vectoradd.o obinls
+	rm -rf $(TESTNAME)
