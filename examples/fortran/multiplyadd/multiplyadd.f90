@@ -7,7 +7,6 @@ program multiplyadd_example
 
     integer, parameter :: N = 1000
     integer :: i
-    logical :: is_init_dev
 
     real(kind=real32),dimension(N) :: x
     real(kind=real32),dimension(N) :: y
