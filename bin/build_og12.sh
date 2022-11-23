@@ -101,6 +101,12 @@ rsync -av $ROCMLLVM/bin/llvm-nm $installdir/amdgcn-amdhsa/bin/nm
 rsync -av $ROCMLLVM/bin/lld     $installdir/amdgcn-amdhsa/bin/ld
 echo " ============================ OG12BSTEP: Configure device ================="
 cd $OGDIR
+
+# Determine commit ID
+pushd gcc
+GIT_ID=$(git rev-parse HEAD)
+popd
+
 #  Uncomment next line to start build from scratch
 [ -d ./build-amdgcn ] && rm -rf build-amdgcn
 mkdir -p build-amdgcn
@@ -131,12 +137,13 @@ echo " ============================ OG12BSTEP: host configure ================="
 mkdir -p build-host
 echo cd build-host
 cd build-host
-echo "../gcc/configure --prefix=$installdir -v --build=x86_64-pc-linux-gnu --host=x86_64-pc-linux-gnu --target=x86_64-pc-linux-gnu --enable-offload-targets=amdgcn-amdhsa=$installdir/amdgcn-amdhsa --disable-multilib "
-../gcc/configure --prefix=$installdir -v --build=x86_64-pc-linux-gnu --host=x86_64-pc-linux-gnu --target=x86_64-pc-linux-gnu --enable-offload-targets=amdgcn-amdhsa=$installdir/amdgcn-amdhsa --disable-multilib 2>&1 | tee ../hostconfig.stdout
+echo "../gcc/configure --prefix=$installdir -v --with-pkgversion=\"AMD-OG12 Sourcery CodeBench (AMD GPU) : $GIT_ID\" --build=x86_64-pc-linux-gnu --host=x86_64-pc-linux-gnu --target=x86_64-pc-linux-gnu --enable-offload-targets=amdgcn-amdhsa=$installdir/amdgcn-amdhsa --disable-multilib "
+../gcc/configure --prefix=$installdir -v --with-pkgversion="AMD-OG12 Sourcery CodeBench (AMD GPU) : $GIT_ID" --build=x86_64-pc-linux-gnu --host=x86_64-pc-linux-gnu --target=x86_64-pc-linux-gnu --enable-offload-targets=amdgcn-amdhsa=$installdir/amdgcn-amdhsa --disable-multilib 2>&1 | tee ../hostconfig.stdout
 if [ $? != 0 ] ; then 
    echo "ERROR configure host compiler failed"
    exit 1 
 fi
+
 echo " ============================ OG12BSTEP: host make ================="
 make -j$make_jobs
 if [ $? != 0 ] ; then 
