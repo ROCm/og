@@ -31,7 +31,7 @@ FLIBS                   =
 CPPFLAGS               += -I$(OG)/include -DLINUX -DLinux -DUSE_MPI -DMPICH_SKIP_MPICXX $(GPROF_FLAGS)
 CPPFFLAGS               = -I$(OG)/include -DLINUX -DLinux -Dmpi -DMPI -DUSE_MPI -DMPICH_SKIP_MPICXX $(OPENMP_FLAGS) $(GPROF_FLAGS)
 
-export PLATFORM_LIBPATH_EXTRAS = -L $(TETON_PATH) -L $(CMG_PATH)/sources -Wl,-rpath=$(CMG_PATH)/sources -L $(CMG_CLEAN_PATH)/src -L$(OGLIBDIR)/lib64 -Wl,-rpath=$(OGLIBDIR) -v
+export PLATFORM_LIBPATH_EXTRAS = -L $(TETON_PATH) -Wl,-rpath=$(TETON_PATH) -L $(CMG_PATH)/sources -Wl,-rpath=$(CMG_PATH)/sources -L $(CMG_CLEAN_PATH)/src -Wl,-rpath=$(CMG_CLEAN_PATH)/src -L$(OGLIBDIR)/lib64 -Wl,-rpath=$(OGLIBDIR) -v
 
 # MPI Definitions
 MPI_INC_PATH            = -I$(MPI_INSTALL_DIR)/include
