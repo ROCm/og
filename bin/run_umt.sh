@@ -81,5 +81,6 @@ fi
 # Run UMT
 if [ "$1" == "run_umt" ]; then
 pushd $UMT_PATH/Teton
-./SuOlsonTest
+#./SuOlsonTest grid_8192_12x12x12.cmg
+./run_1rack_8Kmpi_8omp_8rpn
 fi
