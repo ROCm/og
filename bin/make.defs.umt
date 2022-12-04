@@ -8,7 +8,7 @@ TETON_PATH              = $(UMT_PATH)/Teton
 CMG_PATH                = $(UMT_PATH)/cmg2Kull
 CMG_CLEAN_PATH          = $(UMT_PATH)/CMG_CLEAN
 
-CXXFLAGS                = -O3 -fopenmp -foffload=-march=$(TARGET) 
+CXXFLAGS                = -O3 
 
 CWD                     = $(shell pwd)
 
@@ -48,7 +48,7 @@ CC				              = mpicc
 F90                     = mpifort
 FPP                     = mpifort
 
-F90FLAGS_OPT            =  -g -O3 -fPIC $(OPENMP_FLAGS)
+F90FLAGS_OPT            =  -g -O3 -fPIC $(OPENMP_FLAGS) -fallow-argument-mismatch
 CXXFLAGS_OPT	          =  -g -O3 -w  -fPIC  $(OPENMP_FLAGS)
 CFLAGS_OPT		          =  -g -O3 -w -fPIC  $(OPENMP_FLAGS)
 

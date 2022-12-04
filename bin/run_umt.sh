@@ -1,4 +1,14 @@
 #!/bin/bash
+
+function usage(){
+  echo ""
+  echo "---------------- Usage ----------------"
+  echo "./run_umt.sh [option]"
+  echo "Options:  build_mpi, build_umt, run_umt"
+  echo "---------------------------------------"
+  echo ""
+}
+
 export ROCM_PATH=/opt/rocm
 
 export OG=$HOME/git/og12/install
@@ -17,8 +27,6 @@ else
 fi
 
 export UMT_PATH=$HOME/git/og-test/UMT2013-20140204
-export CMG_PATH=$HOME/git/$UMT_PATH/cmg2Kull
-export CMG_CLEAN_PATH=$HOME/git/$UMT_PATH/CMG_CLEAN
 
 export OMPI_PATH=$HOME/git/ompi
 export MPI_INSTALL_DIR=$HOME/local/ompi
@@ -79,7 +87,10 @@ fi
 
 # Run UMT
 if [ "$1" == "run_umt" ]; then
-
-pushd $UMT_PATH/Teton
-mpirun -np 64 ./SuOlsonTest grid_64MPI_12x12x12.cmg 16 2 16 8 4
+    pushd $UMT_PATH/Teton
+    mpirun -np 64 ./SuOlsonTest grid_64MPI_12x12x12.cmg 16 2 16 8 4
+    popd
+    exit 1
 fi
+
+usage
