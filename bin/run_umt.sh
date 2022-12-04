@@ -42,7 +42,8 @@ if [ "$1" == "build_mpi" ]; then
     exit 1
 fi
 
-#if $MPI_INSTALL_DIR exits extend PATH and LD_LIBRARY_PATH
+export PATH=$MPI_INSTALL_DIR/bin:$PATH
+export LD_LIBRARY_PATH=$MPI_INSTALL_DIR/lib:$LD_LIBRARY_PATH
 
 # Build UMT
 if [ "$1" == "build_umt" ]; then
@@ -54,8 +55,6 @@ if [ "$1" == "build_umt" ]; then
         exit 0;
     fi
 
-export PATH=$MPI_INSTALL_DIR/bin:$PATH
-export LD_LIBRARY_PATH=$MPI_INSTALL_DIR/lib:$LD_LIBRARY_PATH
 
 if [ -f "$UMT_PATH/make.defs" ]; then
     mv $UMT_PATH/make.defs $UMT_PATH/make.defs.backup
@@ -80,7 +79,7 @@ fi
 
 # Run UMT
 if [ "$1" == "run_umt" ]; then
+
 pushd $UMT_PATH/Teton
-#./SuOlsonTest grid_8192_12x12x12.cmg
-./run_1rack_8Kmpi_8omp_8rpn
+mpirun -np 64 ./SuOlsonTest grid_64MPI_12x12x12.cmg 16 2 16 8 4
 fi
