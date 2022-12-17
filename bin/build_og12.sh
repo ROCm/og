@@ -10,11 +10,19 @@
 #  Script follows some instruction given at https://gcc.gnu.org/wiki/Offloading
 #  Written by Greg Rodgers
 
-# Set number of make jobs to speed this up. 
-make_jobs=12
-
 # This OGDIR will contain multiple git repositories and build directories 
 OGDIR=${OGDIR:-$HOME/git/og12}
+
+# OG_INSTALL_DIR points to the final installation directory used for "make install"
+OG_INSTALL_DIR=${OG_INSTALL_DIR:-$OGDIR/install}
+
+# Set number of make jobs to speed this up. 
+make_jobs=$(($(nproc) / 2))
+
+echo " ============================ OG12BSTEP: Information  ================="
+echo "Build directories under: ${OGDIR}"
+echo "Install directory:       ${OG_INSTALL_DIR}"
+echo "Using ${make_jobs} processes to build"
 
 # This script requires ROCMLLVM.
 ROCM_PATH=${ROCM_PATH:-/opt/rocm}
@@ -91,14 +99,13 @@ if [ ! -L mpfr ] ; then
    ln -sf mpfr-4.1.0 mpfr
 fi
 
-installdir="$OGDIR/install"
-[ -d $installdir ] && rm -rf $installdir
-mkdir -p $installdir/amdgcn-amdhsa/bin
-rsync -av $ROCMLLVM/bin/llvm-ar $installdir/amdgcn-amdhsa/bin/ar
-rsync -av $ROCMLLVM/bin/llvm-ar $installdir/amdgcn-amdhsa/bin/ranlib
-rsync -av $ROCMLLVM/bin/llvm-mc $installdir/amdgcn-amdhsa/bin/as
-rsync -av $ROCMLLVM/bin/llvm-nm $installdir/amdgcn-amdhsa/bin/nm
-rsync -av $ROCMLLVM/bin/lld     $installdir/amdgcn-amdhsa/bin/ld
+[ -d $OG_INSTALL_DIR ] && rm -rf $OG_INSTALL_DIR
+mkdir -p $OG_INSTALL_DIR/amdgcn-amdhsa/bin
+rsync -av $ROCMLLVM/bin/llvm-ar $OG_INSTALL_DIR/amdgcn-amdhsa/bin/ar
+rsync -av $ROCMLLVM/bin/llvm-ar $OG_INSTALL_DIR/amdgcn-amdhsa/bin/ranlib
+rsync -av $ROCMLLVM/bin/llvm-mc $OG_INSTALL_DIR/amdgcn-amdhsa/bin/as
+rsync -av $ROCMLLVM/bin/llvm-nm $OG_INSTALL_DIR/amdgcn-amdhsa/bin/nm
+rsync -av $ROCMLLVM/bin/lld     $OG_INSTALL_DIR/amdgcn-amdhsa/bin/ld
 echo " ============================ OG12BSTEP: Configure device ================="
 cd $OGDIR
 
@@ -113,8 +120,8 @@ mkdir -p build-amdgcn
 echo cd build-amdgcn
 cd build-amdgcn
 WITHOPTS="--with-gmp --with-mpfr --with-mpc "
-echo "../gcc/configure --prefix=$installdir -v --target=amdgcn-amdhsa --enable-languages=c,lto,fortran --disable-sjlj-exceptions --with-newlib --enable-as-accelerator-for=x86_64-pc-linux-gnu --with-build-time-tools=$installdir/amdgcn-amdhsa/bin "  | tee ../amdgcnconfig.stdout
-../gcc/configure --prefix=$installdir -v --target=amdgcn-amdhsa --enable-languages=c,lto,fortran --disable-sjlj-exceptions --with-newlib --enable-as-accelerator-for=x86_64-pc-linux-gnu --with-build-time-tools=$installdir/amdgcn-amdhsa/bin  2>&1 | tee ../amdgcnconfig.stdout
+echo "../gcc/configure --prefix=$OG_INSTALL_DIR -v --target=amdgcn-amdhsa --enable-languages=c,lto,fortran --disable-sjlj-exceptions --with-newlib --enable-as-accelerator-for=x86_64-pc-linux-gnu --with-build-time-tools=$OG_INSTALL_DIR/amdgcn-amdhsa/bin "  | tee ../amdgcnconfig.stdout
+   ../gcc/configure --prefix=$OG_INSTALL_DIR -v --target=amdgcn-amdhsa --enable-languages=c,lto,fortran --disable-sjlj-exceptions --with-newlib --enable-as-accelerator-for=x86_64-pc-linux-gnu --with-build-time-tools=$OG_INSTALL_DIR/amdgcn-amdhsa/bin  2>&1 | tee ../amdgcnconfig.stdout
 if [ $? != 0 ] ; then 
    echo "ERROR  configure amdgcn compiler failed"
    exit 1
@@ -137,8 +144,8 @@ echo " ============================ OG12BSTEP: host configure ================="
 mkdir -p build-host
 echo cd build-host
 cd build-host
-echo "../gcc/configure --prefix=$installdir -v --with-pkgversion=\"AMD-OG12 Sourcery CodeBench (AMD GPU) : $GIT_ID\" --build=x86_64-pc-linux-gnu --host=x86_64-pc-linux-gnu --target=x86_64-pc-linux-gnu --enable-offload-targets=amdgcn-amdhsa=$installdir/amdgcn-amdhsa --disable-multilib "
-../gcc/configure --prefix=$installdir -v --with-pkgversion="AMD-OG12 Sourcery CodeBench (AMD GPU) : $GIT_ID" --build=x86_64-pc-linux-gnu --host=x86_64-pc-linux-gnu --target=x86_64-pc-linux-gnu --enable-offload-targets=amdgcn-amdhsa=$installdir/amdgcn-amdhsa --disable-multilib 2>&1 | tee ../hostconfig.stdout
+echo "../gcc/configure --prefix=$OG_INSTALL_DIR -v --with-pkgversion=\"AMD-OG12 Sourcery CodeBench (AMD GPU) : $GIT_ID\" --build=x86_64-pc-linux-gnu --host=x86_64-pc-linux-gnu --target=x86_64-pc-linux-gnu --enable-offload-targets=amdgcn-amdhsa=$OG_INSTALL_DIR/amdgcn-amdhsa --disable-multilib "
+../gcc/configure --prefix=$OG_INSTALL_DIR -v --with-pkgversion="AMD-OG12 Sourcery CodeBench (AMD GPU) : $GIT_ID" --build=x86_64-pc-linux-gnu --host=x86_64-pc-linux-gnu --target=x86_64-pc-linux-gnu --enable-offload-targets=amdgcn-amdhsa=$OG_INSTALL_DIR/amdgcn-amdhsa --disable-multilib 2>&1 | tee ../hostconfig.stdout
 if [ $? != 0 ] ; then 
    echo "ERROR configure host compiler failed"
    exit 1 
