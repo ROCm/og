@@ -10,15 +10,14 @@
 #  Script follows some instruction given at https://gcc.gnu.org/wiki/Offloading
 #  Written by Greg Rodgers
 
-# Set number of make jobs to speed this up. 
-make_jobs=12
-
 # This OGDIR will contain multiple git repositories and build directories 
 OGDIR=${OGDIR:-$HOME/git/og12}
 
 # OG_INSTALL_DIR points to the final installation directory used for "make install"
 OG_INSTALL_DIR=${OG_INSTALL_DIR:-$OGDIR/install}
 
+# Set number of make jobs to speed this up. 
+make_jobs=$(($(nproc) / 2))
 
 echo " ============================ OG12BSTEP: Information  ================="
 echo "Build directories under: ${OGDIR}"
