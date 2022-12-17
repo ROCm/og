@@ -19,6 +19,12 @@ OGDIR=${OGDIR:-$HOME/git/og12}
 # OG_INSTALL_DIR points to the final installation directory used for "make install"
 OG_INSTALL_DIR=${OG_INSTALL_DIR:-$OGDIR/install}
 
+
+echo " ============================ OG12BSTEP: Information  ================="
+echo "Build directories under: ${OGDIR}"
+echo "Install directory:       ${OG_INSTALL_DIR}"
+echo "Using ${make_jobs} processes to build"
+
 # This script requires ROCMLLVM.
 ROCM_PATH=${ROCM_PATH:-/opt/rocm}
 ROCMLLVM=${ROCMLLVM:-$ROCM_PATH/llvm}
