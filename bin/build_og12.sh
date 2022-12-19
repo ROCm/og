@@ -17,12 +17,12 @@ OGDIR=${OGDIR:-$HOME/git/og12}
 OG_INSTALL_DIR=${OG_INSTALL_DIR:-$OGDIR/install}
 
 # Set number of make jobs to speed this up. 
-make_jobs=$(($(nproc) / 2))
+OG_BUILD_PROCS=${OG_BUILD_PROCS:-$(($(nproc) / 2))}
 
 echo " ============================ OG12BSTEP: Information  ================="
 echo "Build directories under: ${OGDIR}"
 echo "Install directory:       ${OG_INSTALL_DIR}"
-echo "Using ${make_jobs} processes to build"
+echo "Using ${OG_BUILD_PROCS} processes to build"
 
 # This script requires ROCMLLVM.
 ROCM_PATH=${ROCM_PATH:-/opt/rocm}
@@ -127,7 +127,7 @@ if [ $? != 0 ] ; then
    exit 1
 fi
 echo " ============================ OG12BSTEP: device make ================="
-make -j$make_jobs
+make -j$OG_BUILD_PROCS
 if [ $? != 0 ] ; then 
    echo "ERROR  make amdgcn compiler failed"
    exit 1
@@ -152,7 +152,7 @@ if [ $? != 0 ] ; then
 fi
 
 echo " ============================ OG12BSTEP: host make ================="
-make -j$make_jobs
+make -j$OG_BUILD_PROCS
 if [ $? != 0 ] ; then 
    echo "ERROR  make host compiler failed"
    exit 1
