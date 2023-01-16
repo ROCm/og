@@ -146,7 +146,7 @@ echo cd build-host
 cd build-host
 echo "../gcc/configure --prefix=$OG_INSTALL_DIR -v --with-pkgversion=\"AMD-OG12 Sourcery CodeBench (AMD GPU) : $GIT_ID\" --build=x86_64-pc-linux-gnu --host=x86_64-pc-linux-gnu --target=x86_64-pc-linux-gnu --enable-threads --disable-libmudflap --disable-libstdcxx-pch --disable-multilib --with-gnu-as --with-gnu-ld --enable-languages=c,c++,fortran --enable-shared --enable-lto --disable-nls --enable-libgomp --disable-libitm --enable-libatomic --disable-libssp --disable-libcc1 --enable-offload-targets=amdgcn-amdhsa=$installdir/amdgcn-amdhsa"
 ../gcc/configure --prefix=$OG_INSTALL_DIR -v --with-pkgversion="AMD-OG12 Sourcery CodeBench (AMD GPU) : $GIT_ID" --build=x86_64-pc-linux-gnu --host=x86_64-pc-linux-gnu --target=x86_64-pc-linux-gnu --enable-threads --disable-libmudflap --disable-libstdcxx-pch \
-   --disable-multilib --with-gnu-as --with-gnu-ld --enable-languages=c,c++,fortran --enable-shared --enable-lto --disable-nls --enable-libgomp --disable-libitm --enable-libatomic --disable-libssp --disable-libcc1 \ 
+   --disable-multilib --with-gnu-as --with-gnu-ld --enable-languages=c,c++,fortran --enable-shared --enable-lto --disable-nls --enable-libgomp --disable-libitm --enable-libatomic --disable-libssp --disable-libcc1 \
    --enable-offload-targets=amdgcn-amdhsa=$OG_INSTALL_DIR/amdgcn-amdhsa 2>&1 | tee ../hostconfig.stdout
 if [ $? != 0 ] ; then 
    echo "ERROR configure host compiler failed"
