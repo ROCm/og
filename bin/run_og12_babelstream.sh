@@ -4,7 +4,14 @@
 
 OGDIR=${OGDIR:-/opt/og12/sourcery-2022.09-5}
 OGGXX=${OGGXX:-$OGDIR/bin/g++}
-OGLIB=${OG12LIB:-$OGDIR/lib64}
+if [ -d $OGDIR/lib64 ] ; then
+  OGLIB=${OGLIB:-$OGDIR/lib64}
+else
+  OGLIB=${OGLIB:-$OGDIR/x86_64-none-linux-gnu/lib64}
+  if [ ! -d $OGLIB ] ; then
+    echo "WARING $OGLIB NOT FOUND "
+  fi
+fi
 ROCMDIR=${ROCMDIR:-/opt/rocm}
 
 #  For current build of OG12 do something like this
