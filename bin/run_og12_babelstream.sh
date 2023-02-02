@@ -4,8 +4,8 @@
 
 OGDIR=${OGDIR:-/opt/og12}
 OG12DIR=${OG12DIR:-$OGDIR/sourcery-2022.09-5}
-OG12GXX=${OG12GXX:-$OG12DIR/bin/x86_64-none-linux-gnu-g++}
-OG12LIB=${OG12LIB:-$OG12DIR/x86_64-none-linux-gnu/lib64}
+OG12GXX=${OG12GXX:-$OG12DIR/bin/g++}
+OG12LIB=${OG12LIB:-$OG12DIR/lib64}
 ROCMDIR=${ROCMDIR:-/opt/rocm}
 
 #  For current build of OG12 do something like this
