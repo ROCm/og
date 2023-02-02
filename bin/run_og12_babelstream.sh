@@ -2,16 +2,15 @@
 
 # run_og12_babelstream.sh - compile with OG12 g++  and run babelstream
 
-OGDIR=${OGDIR:-/opt/og12}
-OG12DIR=${OG12DIR:-$OGDIR/sourcery-2022.09-5}
-OG12GXX=${OG12GXX:-$OG12DIR/bin/g++}
-OG12LIB=${OG12LIB:-$OG12DIR/lib64}
+OGDIR=${OGDIR:-/opt/og12/sourcery-2022.09-5}
+OGGXX=${OGGXX:-$OGDIR/bin/g++}
+OGLIB=${OG12LIB:-$OGDIR/lib64}
 ROCMDIR=${ROCMDIR:-/opt/rocm}
 
 #  For current build of OG12 do something like this
-#    export OG12DIR=~/git/og12/install
-#    export OG12GXX=~/git/og12/install/bin/g++
-#    export OG12LIB=~/git/og12/install/lib64
+#    export OGDIR=~/git/og12/install
+#    export OGGXX=~/git/og12/install/bin/g++
+#    export OGLIB=~/git/og12/install/lib64
 
 #  https://github.com/UoB-HPC/babelstream
 BABELSTREAM_REPO=${BABELSTREAM_REPO:-$HOME/git/babelstream}
@@ -57,13 +56,13 @@ echo "=========> GPU:      $_offload_arch" || tee -a results.txt
 echo | tee -a results.txt
 echo "=========> RUN:      1.  og12 OFFLOAD DEFAULTS" | tee -a results.txt
 og12_flags="-O3 -fopenmp -foffload=-march=$_offload_arch -D_OG12_DEFAULTS -DOMP -DOMP_TARGET_GPU"
-   export LD_LIBRARY_PATH=$OG12LIB:$ROCMDIR/hsa/lib
+   export LD_LIBRARY_PATH=$OGLIB:$ROCMDIR/hsa/lib
    export OMP_TARGET_OFFLOAD=MANDATORY
    #unset GCN_DEBUG
    #export GCN_DEBUG=1
    EXEC=omp-stream-og12
    rm -f $EXEC
-   cmd="$OG12GXX -v $og12_flags $omp_src -o $EXEC"
+   cmd="$OGGXX -v $og12_flags $omp_src -o $EXEC"
    echo "=========> CC CMD:   $cmd" | tee -a results.txt
    echo
    echo env >compile.log
