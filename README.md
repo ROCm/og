@@ -3,9 +3,9 @@ GCC12
 
 This is README.md for https://github.com/ROCM-Developer-Tools/og.
 
-This is the repository for the development of OpenMP in GCC including various releases of development builds of gcc-12. This repository includes build scripts test scripts, and Makefile examples for developers and testers to use.
+This is the repository for the development of OpenMP in GCC including various releases of development builds of gcc-12 called OG12 and release artifacts from the Code Sourcery release.. This repository includes build scripts test scripts, and Makefile examples for developers and testers to use.
 
-The last development build available as a "release" in this repository is the code sourcery preview dated 2022.9-05.
+The last development "release" in this repository is the OG12 release dated 2023.02-2.
 
 Attention Test Users!  Please use this repository for [issues](https://github.com/ROCm-Developer-Tools/og/issues).
 
