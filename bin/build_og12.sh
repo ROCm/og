@@ -69,6 +69,7 @@ fi
 [ ! -L $gccmaindir/newlib ] && ln -sf $OGDIR/newlib-cygwin/newlib $gccmaindir/newlib
 
 # wget tarballs for other components
+set -e
 cd $gccmaindir
 if [ ! -L isl ] ; then 
    echo -- getting isl
@@ -98,14 +99,24 @@ if [ ! -L mpfr ] ; then
    tar -xf mpfr-4.1.0.tar
    ln -sf mpfr-4.1.0 mpfr
 fi
+set +e
 
 [ -d $OG_INSTALL_DIR ] && rm -rf $OG_INSTALL_DIR
 mkdir -p $OG_INSTALL_DIR/amdgcn-amdhsa/bin
-rsync -av $ROCMLLVM/bin/llvm-ar $OG_INSTALL_DIR/amdgcn-amdhsa/bin/ar
-rsync -av $ROCMLLVM/bin/llvm-ar $OG_INSTALL_DIR/amdgcn-amdhsa/bin/ranlib
-rsync -av $ROCMLLVM/bin/llvm-mc $OG_INSTALL_DIR/amdgcn-amdhsa/bin/as
-rsync -av $ROCMLLVM/bin/llvm-nm $OG_INSTALL_DIR/amdgcn-amdhsa/bin/nm
+if [ $? != 0 ] ; then 
+   echo "ERROR: No update access to $OG_INSTALL_DIR/amdgcn-amdhsa/bin"
+   exit 1
+fi
+rsync -av $ROCMLLVM/bin/llvm-ar $OG_INSTALL_DIR/amdgcn-amdhsa/bin/ar     && \
+rsync -av $ROCMLLVM/bin/llvm-ar $OG_INSTALL_DIR/amdgcn-amdhsa/bin/ranlib && \
+rsync -av $ROCMLLVM/bin/llvm-mc $OG_INSTALL_DIR/amdgcn-amdhsa/bin/as     && \
+rsync -av $ROCMLLVM/bin/llvm-nm $OG_INSTALL_DIR/amdgcn-amdhsa/bin/nm     && \
 rsync -av $ROCMLLVM/bin/lld     $OG_INSTALL_DIR/amdgcn-amdhsa/bin/ld
+if [ $? != 0 ] ; then 
+   echo "ERROR: rsync to $OG_INSTALL_DIR failed"
+   exit 1
+fi
+
 echo " ============================ OG12BSTEP: Configure device ================="
 cd $OGDIR
 
@@ -117,6 +128,10 @@ popd
 #  Uncomment next line to start build from scratch
 [ -d ./build-amdgcn ] && rm -rf build-amdgcn
 mkdir -p build-amdgcn
+if [ $? != 0 ] ; then 
+   echo "ERROR: mkdir build-amdgcn"
+   exit 1
+fi
 echo cd build-amdgcn
 cd build-amdgcn
 WITHOPTS="--with-gmp --with-mpfr --with-mpc "
@@ -134,6 +149,10 @@ if [ $? != 0 ] ; then
 fi
 echo " ============================ OG12BSTEP: device make install ================="
 make install 
+if [ $? != 0 ] ; then 
+   echo "ERROR: make install failed"
+   exit 1
+fi
 echo "Removing symlink for newlib rm $gccmaindir/newlib"
 rm $gccmaindir/newlib
 
@@ -142,6 +161,10 @@ cd $OGDIR
 [ -d ./build-host ] && rm -rf build-host
 echo " ============================ OG12BSTEP: host configure ================="
 mkdir -p build-host
+if [ $? != 0 ] ; then 
+   echo "ERROR: mkdir build-host"
+   exit 1
+fi
 echo cd build-host
 cd build-host
 echo "../gcc/configure --prefix=$OG_INSTALL_DIR -v --with-pkgversion=\"AMD-OG12 Sourcery CodeBench (AMD GPU) : $GIT_ID\" --build=x86_64-pc-linux-gnu --host=x86_64-pc-linux-gnu --target=x86_64-pc-linux-gnu --enable-threads --disable-libmudflap --disable-libstdcxx-pch --disable-multilib --with-gnu-as --with-gnu-ld --enable-languages=c,c++,fortran --enable-shared --enable-lto --disable-nls --enable-libgomp --disable-libitm --enable-libatomic --disable-libssp --disable-libcc1 --enable-offload-targets=amdgcn-amdhsa=$installdir/amdgcn-amdhsa"
@@ -161,4 +184,8 @@ if [ $? != 0 ] ; then
 fi
 echo " ============================ OG12BSTEP: host install ================="
 make install 
+if [ $? != 0 ] ; then 
+   echo "ERROR: make install failed"
+   exit 1
+fi
 echo " ============================ OG12BSTEP: DONE ALL STEPS ================="
