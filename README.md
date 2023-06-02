@@ -1,11 +1,11 @@
-GCC12
-=====
+OG13
+====
 
 This is README.md for https://github.com/ROCM-Developer-Tools/og.
 
-This is the repository for the development of OpenMP in GCC including various releases of development builds of gcc-12 called OG12 and release artifacts from the Code Sourcery release.. This repository includes build scripts test scripts, and Makefile examples for developers and testers to use.
+This is the repository for the development of OpenMP in GCC including various releases of development builds of gcc-13 called OG13 and release artifacts from the Code Sourcery release.. This repository includes build scripts test scripts, and Makefile examples for developers and testers to use.
 
-The last development "release" in this repository is the OG12 release dated 2023.02-2.
+The last development "release" in this repository is the OG13 release dated 2023.02-2.
 
 Attention Test Users!  Please use this repository for [issues](https://github.com/ROCm-Developer-Tools/og/issues).
 
@@ -23,12 +23,11 @@ Table of contents
 
 <A NAME="Overview">
 
-The GCC12 compiler in this repositoryis a scripted build of gcc-12 and supporting software.
+The OG13 compiler in this repositoryis a scripted build of gcc-13 and supporting software.
 It has support for OpenMP target offload on AMD GPUs.
-The bin directory of this repository contains build scripts needed to download and build
-GCC12 from source.
+The bin directory of this repository contains build scripts needed to download and build OG13 from source.
 
-You MUST install ROCm for GCC12 to work with AMD GPUs.
+You MUST install ROCm for OG13 to work with AMD GPUs.
 
 ## Copyright and Disclaimer
 
@@ -72,7 +71,7 @@ Materials by the Government constitutes acknowledgement of AMD's proprietary rig
 EXPORT RESTRICTIONS: The Materials may be subject to export restrictions as stated in the 
 Software License Agreement.
 
-## OG12 Limitations
+## OG13 Limitations
 
 <A NAME="Limitations">
 
