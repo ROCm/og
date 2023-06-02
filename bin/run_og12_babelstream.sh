@@ -2,7 +2,7 @@
 
 # run_og12_babelstream.sh - compile with OG12 g++  and run babelstream
 
-OGDIR=${OGDIR:-/opt/og12/sourcery-2022.09-5}
+OGDIR=${OGDIR:-$HOME/git/og12/install}
 OGGXX=${OGGXX:-$OGDIR/bin/g++}
 if [ -d $OGDIR/lib64 ] ; then
   OGLIB=${OGLIB:-$OGDIR/lib64}
