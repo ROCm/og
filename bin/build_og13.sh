@@ -137,7 +137,7 @@ fi
 
 cd $OGDIR
 #  Uncomment next line to start build from scratch
-[ -d ./build-binutils] && rm -rf build-binutils
+[ -d ./build-binutils ] && rm -rf build-binutils
 echo " ============================ OG13BSTEP: binutils configure ================="
 mkdir -p build-binutils
 if [ $? != 0 ] ; then 
