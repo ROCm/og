@@ -1,13 +1,13 @@
 OG13
 ====
 
-This is README.md for https://github.com/ROCM-Developer-Tools/og.
+This is README.md for https://github.com/ROCm/og.
 
 This is the repository for the development of OpenMP in GCC including various releases of development builds of gcc-13 called OG13 and release artifacts from the Code Sourcery release.. This repository includes build scripts test scripts, and Makefile examples for developers and testers to use.
 
 The last development "release" in this repository is the OG13 release dated 2023.02-2.
 
-Attention Test Users!  Please use this repository for [issues](https://github.com/ROCm-Developer-Tools/og/issues).
+Attention Test Users!  Please use this repository for [issues](https://github.com/ROCm/og/issues).
 
 Table of contents
 -----------------
@@ -15,8 +15,8 @@ Table of contents
 - [Overview](#Overview)
 - [Copyright and Disclaimer](#Copyright)
 - [Software License Agreement](LICENSE)
-- [Release Packages](https://github.com/ROCm-Developer-Tools/og/releases)
-- [Issues](https://github.com/ROCm-Developer-Tools/og/issues)
+- [Release Packages](https://github.com/ROCm/og/releases)
+- [Issues](https://github.com/ROCm/og/issues)
 - [Limitations](#Limitations)
 
 ## Overview
@@ -75,7 +75,7 @@ Software License Agreement.
 
 <A NAME="Limitations">
 
-When available, see the [release notes](https://github.com/ROCm-Developer-Tools/og/releases) in github.  Here are some limitations.
+When available, see the [release notes](https://github.com/ROCm/og/releases) in github.  Here are some limitations.
 
 ```
 TBD
